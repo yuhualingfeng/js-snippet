@@ -33,16 +33,79 @@
 只读属性,表示整个异步请求中的状态,其存在五个可能的值.
 
 ### response
+只读属性,此属性返回服务端的响应内容,客户端可以通过`xhr.responseType`指定响应内容的类型.
 
 ### responseText
+只读属性,此属性为`xhr.response`的一个特例,返回的响应内容为`text`类型.如果指定了`xhr.responseType`为非`text`类型,则读取此属性时会报错.
+
+```javascript
+var xhr = new XMLHttpRequest(),
+    method = "GET",
+    url = "https://api.github.com/search/repositories?q=language:javascript&sort=stars&order=desc&page=1&per_page=10";
+
+xhr.open(method, url, true);
+xhr.responseType = "json";
+xhr.onreadystatechange = function () {
+
+  if(xhr.readyState === xhr.DONE) {
+  	if(xhr.status === 200){ // 请求成功
+  		console.log(xhr.responseText); // 执行到这里会报错
+			
+  	}else{ // 请求失败
+  		console.log(JSON.parse(xhr.response));
+  	}
+    
+  }
+};
+xhr.send();
+
+```
+由于我们指定了`xhr.responseType`的值为`json`,获取响应内容用`xhr.response`就OK了.
 
 ### responseType
+`responseType`定义响应内容(即`xhr.response`)的类型,其值为枚举类型,分别为:`arraybuffer`,`blob`,`document`,`json`,`text`.如果传入的值为空字符串,则默认为`text`.
+
 
 ### responseURL
+返回序列化后的响应URL.
 
 ### responseXML
+返回被转化为XML格式的响应内容,以下情况将返回null.
+
++ 请求不成功
++ 还未执行`xhr.send()`方法
++ 响应内容不能被转换为XML或者HTML 
+
+### status
+
+### statusText
+
+### timeout
+
+### ontimeout
+
+### upload
+
+### withCredentials
+
+### onprogress,onabort,onerror,onload,onloadend,onloadstart
+
 
 ## 方法
+
+### abort()
+
+### getAllResponseHeaders()
+
+### getResponseHeader()
+
+### open()
+
+### ovverideMimeType()
+
+### send()
+
+### setRequestHeader()
 
 ## 实例
 
