@@ -77,36 +77,121 @@ xhr.send();
 + 响应内容不能被转换为XML或者HTML 
 
 ### status
+返回响应的状态码,请求成功返回的状态码为`200`,状态码存在的可能值列表请点击[状态码列表](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)查看.
 
 ### statusText
+返回响应的状态码对应的文字描述,例如 `200` 对应 'OK'.
 
 ### timeout
+设置请求的超时毫秒数，当请求的时长超出了响应的毫秒数,请求会自动中断.如果是在IE浏览器中,该属性的设置需要在`open()`方法之后和`send()`方法之前.
 
 ### ontimeout
+此属性为请求超时的事件处理程序,请求超时，触发此方法.
 
 ### upload
+只读属性,返回一个对象，对象包含了该xhr可以触发的事件.
+```
+console.log(xhr.uplaod);
+<!-- {
+	onabort:null,
+	onerror:null,
+	onload:null,
+	onloadend:null,
+	onloadstart:null,
+	onprogress:null,
+	ontimeout:null
+
+} -->
+```
 
 ### withCredentials
+此属性为一个布尔值,表示是否将验证信息(例如cookie)传入到header中.此属性只针对跨站请求有效.
+
 
 ### onprogress,onabort,onerror,onload,onloadend,onloadstart
+这些属性是`xhr`的事件处理程序.
 
++ `onprogress`:可能会在请求的过程中多次调用,在监测文件上传进度时可以使用此属性.
++ `onerror`:请求过程中发生错误时出发此事件处理程序.
++ `onabort`:请求中断会触发此事件处理处理程序.
++ `onload`:请求执行成功后会触发此事件处理程序.
++ `onloadstart`:请求开始时触发此事件处理程序.
++ `onloadend`:请求完成是触发此事件处理程序,`onload`是必须要成功才会调用.
 
 ## 方法
 
 ### abort()
+中断当前请求,当执行`xhr.send()`后此方法才能生效.
 
 ### getAllResponseHeaders()
+返回响应的header信息(String 类型)，以CRLF分割.如果没有接收到响应头,则返回null.
 
-### getResponseHeader()
+### getResponseHeader(name)
+获取某个header属性的值,`name`参数为需要获取属性值的key.如果header对象不存在此属性或者获取header对象失败,则返回null.
 
-### open()
+### open(method,url,async)
+初始化请求,要执行请求必选先执行此方法.
 
-### ovverideMimeType()
+#### 参数说明
++ `method`:HTTP(s)请求方法,例如`GET`,`POST`,`PUT`,`DELETE` .
++ `url`:请求的路径.
++ `async`:是否为异步请求,一般情况我们这个参数会传`true`.
+
+### ovverideMimeType(mimetype)
+将服务端返回的信息强制转化为mimetype类型.
 
 ### send()
+发送请求,如果请求类型为异步请求,`send()`方法的返回值会立即返回.
 
 ### setRequestHeader()
+设置HTTP请求头.此方法需要在`open()`之后和`send()`之前执行.如果设置了不被支持的属性,请求可能会报错.
+```javascript
+	var xhr = new XMLHttpRequest();
+	xhr.setRequestHeader('Content-Type','application/json');
+```
 
 ## 实例
+注释部分可以单个放开进行测试.
+```javascript
+var xhr = new XMLHttpRequest(),
+    method = "GET",
+    url = "https://api.github.com/search/repositories?q=language:javascript&sort=stars&order=desc&page=1&per_page=10";
+
+xhr.open(method, url, true);
+xhr.responseType = "json";
+
+// xhr.timeout = 1000;
+// xhr.overrideMimeType("text/xml");
+xhr.onreadystatechange = function () {
+  
+  if(xhr.readyState === xhr.DONE) {
+  	if(xhr.status === 200){ // 请求成功
+  	  console.log(xhr.response);
+      // console.log(JSON.parse(xhr.responseText));
+      // console.log(xhr.upload);
+      
+  	  //console.log(xhr.responseXML);
+      //console.log(xhr.responseURL);
+      //console.log(xhr.status);
+      //console.log(xhr.statusText);
+      //console.log('Content-Type:',xhr.getResponseHeader('Content-Type'));
+      //console.log(xhr.responseURL);
+      //console.log(xhr.getAllResponseHeaders());	
+  	}else{ // 请求失败
+  		console.log(xhr.response);
+  	}
+    
+  }
+};
+xhr.ontimeout = function(event){
+  console.log('请求超时！');
+}
+xhr.setRequestHeader('Content-Type','application/json');
+xhr.send();
+
+// xhr.abort();  // 中断请求
+```
+
 
 ## 兼容性
+以上提到的属性和方法在IE7+,Chorme,Firefox等主流浏览器都兼容，其中onprogress,onabort,onerror,onload,onloadend,onloadstart等事件处理程序在IE下需IE10+才能正常运行.
